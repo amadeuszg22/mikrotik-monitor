@@ -26,7 +26,7 @@ def feed(value,mo):
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
 			print(results)
-		except (ConnectionError):
+		except (requests.exceptions.ConnectionError):
 			print ('Timeout')
 	if mo == "rx":
 		try:
@@ -36,7 +36,7 @@ def feed(value,mo):
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
 			print(results)
-		except (ConnectionError):
+		except (requests.exceptions.ConnectionError):
 			print ('Timeout')
 	if mo == "cpu":
 		try:
@@ -46,13 +46,14 @@ def feed(value,mo):
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
 			print(results)
-		except (ConnectionError):
+		except (requests.exceptions.ConnectionError):
 			print ('Timeout')
 				
-try:
-	method = (login_plain, )
-	api = connect(username='admin', password='Zaq220991', host='192.168.0.1', login_methods=method)
-	while True:
+
+while True:
+	try:
+		method = (login_plain, )
+		api = connect(username='admin', password='Zaq220991', host='192.168.0.1', login_methods=method)
 		params = {'interface':'ether1','once':True}
 		result = api(cmd='/interface/monitor-traffic', **params)
 		for a in result:
@@ -75,5 +76,5 @@ try:
 			print ("CPU Load:",a.get("cpu-load"),"%")
 			feed(a.get("cpu-load"),"cpu")
 			time.sleep(60)
-except (librouteros.exceptions.ConnectionError):
-	print ('Timeout')
+	except (librouteros.exceptions.ConnectionError):
+			print ('Timeout')
