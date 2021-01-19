@@ -20,7 +20,7 @@ class config:
 	host=conf.get('r01','host')
 	user=conf.get('r01','user')
 	password=conf.get('r01','password')
-    
+    apikey=conf.get('r01','aio_key')
 
 	
 #result = api(cmd='/interface/print', stats=True)
@@ -35,7 +35,7 @@ def feed(value,mo):
 	if mo == "tx":
 		try:
 			url ="https://io.adafruit.com/api/v2/Ama_g/feeds/ether1-tx/data.json"
-			headers = {'X-AIO-Key': 'aio_imOk9883jkRgc4h83WCSjD6QgSwb','Content-Type': 'application/json'}
+			headers = {'X-AIO-Key': 'apikey','Content-Type': 'application/json'}
 			data = '{"value": "'+str(value)+'"}'
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
@@ -45,7 +45,7 @@ def feed(value,mo):
 	if mo == "rx":
 		try:
 			url ="https://io.adafruit.com/api/v2/Ama_g/feeds/ether1-rx/data.json"
-			headers = {'X-AIO-Key': 'aio_imOk9883jkRgc4h83WCSjD6QgSwb','Content-Type': 'application/json'}
+			headers = {'X-AIO-Key': 'apikey','Content-Type': 'application/json'}
 			data = '{"value": "'+str(value)+'"}'
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
@@ -55,7 +55,7 @@ def feed(value,mo):
 	if mo == "cpu":
 		try:
 			url ="https://io.adafruit.com/api/v2/Ama_g/feeds/r01-cpu/data.json"
-			headers = {'X-AIO-Key': 'aio_imOk9883jkRgc4h83WCSjD6QgSwb','Content-Type': 'application/json'}
+			headers = {'X-AIO-Key': 'apikey','Content-Type': 'application/json'}
 			data = '{"value": "'+str(value)+'"}'
 			r = requests.post(url, data=data, headers=headers)
 			results = r.json()
