@@ -37,6 +37,7 @@ class config:
 	mt_fw_conn_udp=Gauge('mt_fw_conn_table_udp', 'Firewall connections udp')
 	mt_fw_conn_gre=Gauge('mt_fw_conn_table_gre', 'Firewall connections gre')
 	mt_fw_conn_icmp=Gauge('mt_fw_conn_table_icmp', 'Firewall connections icmp')
+	mt_fw_conn_igmp=Gauge('mt_fw_conn_table_igmp', 'Firewall connections igmp')
 #result = api(cmd='/interface/print', stats=True)
 #for a in result:
 #	print (a)
@@ -153,6 +154,7 @@ def main():
 				if i.get("protocol") =="igmp": 
 					fw_conn_igmp = fw_conn_igmp +1
 			print ("FW conn igmp",fw_conn_igmp)
+			config.mt_fw_conn_igmp.set(fw_conn_igmp)
 
 			logging.warning('time={0} ether1tx={1} ether1rx={2} cpu={3} dhcp_lease={4} caps-client={5} dchp_act_lease={6} fw_conn_val={7} fw_conn_tcp={8} fw_conn_udp={9} fw_conn_gre={10} fw_conn_icmp={11} fw_conn_igmp={12}'.format(time_now,t,r,a.get("cpu-load"),len(dhcp_lease),len(caps_reg),dchp_act_lease,len(fw_conn),fw_conn_tcp,fw_conn_udp,fw_conn_gre,fw_conn_icmp,fw_conn_igmp))
 			#wireless_log.warning('time={0} caps-client={1}'.format(time_now,len(caps_reg)))
