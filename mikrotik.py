@@ -36,6 +36,7 @@ class config:
 	mt_fw_conn_tcp=Gauge('mt_fw_conn_table_tcp', 'Firewall connections tcp')
 	mt_fw_conn_udp=Gauge('mt_fw_conn_table_udp', 'Firewall connections udp')
 	mt_fw_conn_gre=Gauge('mt_fw_conn_table_gre', 'Firewall connections gre')
+	mt_fw_conn_icmp=Gauge('mt_fw_conn_table_icmp', 'Firewall connections icmp')
 #result = api(cmd='/interface/print', stats=True)
 #for a in result:
 #	print (a)
@@ -145,6 +146,7 @@ def main():
 				if i.get("protocol") =="icmp": 
 					fw_conn_icmp = fw_conn_icmp +1
 			print ("FW conn icmp",fw_conn_icmp)
+			config.mt_fw_conn_icmp.set(fw_conn_icmp)
 
 			fw_conn_igmp = 0
 			for i in fw_conn:
