@@ -1,0 +1,12 @@
+config.ini
+debug
+debug.log
+/images
+/motosearch
+/__pycache__
+/lib
+/queries
+r02.py
+r03.py
+r04.py
+log.log
