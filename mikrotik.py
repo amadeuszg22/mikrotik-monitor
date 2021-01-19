@@ -32,6 +32,7 @@ class config:
 	
 	caps_reg_table=Gauge('mt_caps_reg_table', 'Capsman registration table')
 
+	mt_fw_conn=Gauge('mt_fw_conn_table', 'Firewall connections')
 
 #result = api(cmd='/interface/print', stats=True)
 #for a in result:
@@ -114,6 +115,7 @@ def main():
 
 			fw_conn =api(cmd='/ip/firewall/connection/print')
 			print ("Fw connections",len(fw_conn))
+			config.mt_fw_conn.set(len(fw_conn))
 
 			fw_conn_tcp = 0
 			for i in fw_conn:
