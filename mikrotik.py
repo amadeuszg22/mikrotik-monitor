@@ -33,7 +33,8 @@ class config:
 	caps_reg_table=Gauge('mt_caps_reg_table', 'Capsman registration table')
 
 	mt_fw_conn=Gauge('mt_fw_conn_table', 'Firewall connections')
-	mt_fw_conn_tcp=Gauge('mt_fw_conn_table_tcp', 'Firewall connections')
+	mt_fw_conn_tcp=Gauge('mt_fw_conn_table_tcp', 'Firewall connections tcp')
+	mt_fw_conn_udp=Gauge('mt_fw_conn_table_udp', 'Firewall connections udp')
 #result = api(cmd='/interface/print', stats=True)
 #for a in result:
 #	print (a)
@@ -122,13 +123,14 @@ def main():
 				if i.get("protocol") =="tcp": 
 					fw_conn_tcp = fw_conn_tcp +1
 			print ("FW conn tcp",fw_conn_tcp)
-			config.mt_fw_conn_tcp.set(len(fw_conn_tcp))
+			config.mt_fw_conn_tcp.set(fw_conn_tcp)
 
 			fw_conn_udp = 0
 			for i in fw_conn:
 				if i.get("protocol") =="udp": 
 					fw_conn_udp = fw_conn_udp +1
 			print ("FW conn udp",fw_conn_udp)
+			config.mt_fw_conn_udp.set(fw_conn_udp)
 
 			fw_conn_gre = 0
 			for i in fw_conn:
