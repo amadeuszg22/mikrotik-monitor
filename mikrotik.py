@@ -26,8 +26,13 @@ class config:
 	tx = Gauge('if_ether_tx', 'eth1 tramsmitted data')
 	rx = Gauge('if_ether_rx', 'eth1 received data')
 	cpu=Gauge('mt_cpu', 'mikrotik cpu utilization')
+
 	dhcp_l=Gauge('mt_dhcp_lease', 'dhcp leases')
-	dhcp_l_a=Gauge('mt_dhcp_lease_active', 'dhcp leases')
+	dhcp_l_a=Gauge('mt_dhcp_lease_active', 'dhcp active leases')
+	
+	caps_reg_table=Gauge('mt_caps_reg_table', 'Capsman registration table')
+
+
 #result = api(cmd='/interface/print', stats=True)
 #for a in result:
 #	print (a)
@@ -100,11 +105,12 @@ def main():
 					dchp_act_lease = dchp_act_lease +1
 			print ("dhcp_lease",len(dhcp_lease))
 			print ("dhcp_active_lease",dchp_act_lease)
-			config.dhcp_l.set(dhcp_lease)
+			config.dhcp_l.set(len(dhcp_lease))
 			config.dhcp_l_a.set(dchp_act_lease)
 
 			caps_reg =api(cmd='/caps-man/registration-table/print')
 			print ("capsman_reg-table",len(caps_reg))
+			config.caps_reg_table.set(len(caps_reg))
 
 			fw_conn =api(cmd='/ip/firewall/connection/print')
 			print ("Fw connections",len(fw_conn))
