@@ -8,7 +8,7 @@ from librouteros import connect
 import logging
 from datetime import datetime
 import configparser
-from prometheus_client import start_http_server, Summary,Gauge
+from prometheus_client import start_http_server, Summary,Gauge,Info
 import random
 
 time_now = datetime.now()
@@ -26,6 +26,16 @@ class config:
 	tx = Gauge('if_ether_tx', 'eth1 tramsmitted data')
 	rx = Gauge('if_ether_rx', 'eth1 received data')
 	cpu=Gauge('mt_cpu', 'mikrotik cpu utilization')
+
+	mem_free=Gauge('mt_mem_free', 'mikrotik cpu utilization')
+	mem_tot=Gauge('mt_mem_total', 'mikrotik cpu utilization')
+
+	nas01tx=Gauge('if_ether_nas01_tx', 'eth1 tramsmitted data')
+	nas01rx=Gauge('if_ether_nas01_rx', 'eth1 received data')
+	srvg001tx=Gauge('if_ether_srvg001_tx', 'eth1 tramsmitted data')
+	srvg001rx=Gauge('if_ether_srvg001_rx', 'eth1 received data')
+	srvg002tx=Gauge('if_ether_srvg002_tx', 'pptp tramsmitted data')
+	srvg002rx=Gauge('if_ether_srvg002_rx', 'pptp received data')
 
 	dhcp_l=Gauge('mt_dhcp_lease', 'dhcp leases')
 	dhcp_l_a=Gauge('mt_dhcp_lease_active', 'dhcp active leases')
@@ -86,8 +96,8 @@ def main():
 			params = {'interface':'ether1','once':True}
 			result = api(cmd='/interface/monitor-traffic', **params)
 			for a in result:
-				print ("RX",((a.get("rx-bits-per-second")/1024)))
-				print ("TX",((a.get("tx-bits-per-second")/1024)))
+				print ("ether1: RX",((a.get("rx-bits-per-second")/1024)))
+				print ("ether1: TX",((a.get("tx-bits-per-second")/1024)))
 				t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
 				r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
 				feed(t,"rx")
@@ -95,12 +105,47 @@ def main():
 				config.tx.set(t)
 				config.rx.set(r)
 
+			params = {'interface':'nas01','once':True}
+			result = api(cmd='/interface/monitor-traffic', **params)
+			for a in result:
+				print ("nas01: RX",((a.get("rx-bits-per-second")/1024)))
+				print ("nas01:TX",((a.get("tx-bits-per-second")/1024)))
+				t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
+				r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
+				config.nas01tx.set(t)
+				config.nas01rx.set(r)
+
+			params = {'interface':'	<pptp-srva001>','once':True}
+			result = api(cmd='/interface/monitor-traffic', **params)
+			for a in result:
+				print ("pptp-srva001: RX",((a.get("rx-bits-per-second")/1024)))
+				print ("pptp-srva001: TX",((a.get("tx-bits-per-second")/1024)))
+				t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
+				r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
+				config.srvg001tx.set(t)
+				config.srvg001rx.set(r)
+
+			params = {'interface':'	<pptp-srvg002>','once':True}
+			result = api(cmd='/interface/monitor-traffic', **params)
+			for a in result:
+				print ("pptp-srvg002: RX",((a.get("rx-bits-per-second")/1024)))
+				print ("pptp-srvg002: TX",((a.get("tx-bits-per-second")/1024)))
+				t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
+				r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
+				config.srvg002tx.set(t)
+				config.srvg002rx.set(r)
+
+
 			params = {'cpu-load'}
 			result = api(cmd='/system/resource/print')
 			for a in result:
 				print ("CPU Load:",a.get("cpu-load"),"%")
+				print ("Memory free:",a.get("free-memory"),"B")
+				print ("Memory Total:",a.get("total-memory"),"B")
 				feed(a.get("cpu-load"),"cpu")
 				config.cpu.set(a.get("cpu-load"))
+				config.mem_free.set(a.get("free-memory"))
+				config.mem_tot.set(a.get("total-memory"))
 			
 			dhcp_lease =api(cmd='/ip/dhcp-server/lease/print')
 			dchp_act_lease = 0
@@ -116,6 +161,8 @@ def main():
 			caps_reg =api(cmd='/caps-man/registration-table/print')
 			print ("capsman_reg-table",len(caps_reg))
 			config.caps_reg_table.set(len(caps_reg))
+
+			
 
 			fw_conn =api(cmd='/ip/firewall/connection/print')
 			print ("Fw connections",len(fw_conn))
