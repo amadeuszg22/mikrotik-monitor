@@ -126,14 +126,23 @@ def main():
 				config.srvg001rx.set(r)
 
 			params = {'interface':'	<pptp-srvg002>','once':True}
-			result = api(cmd='/interface/monitor-traffic', **params)
-			for a in result:
-				print ("pptp-srvg002: RX",((a.get("rx-bits-per-second")/1024)))
-				print ("pptp-srvg002: TX",((a.get("tx-bits-per-second")/1024)))
-				t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
-				r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
+			try:
+				result = api(cmd='/interface/monitor-traffic', **params)
+				for a in result:
+					print ("pptp-srvg002: RX",((a.get("rx-bits-per-second")/1024)))
+					print ("pptp-srvg002: TX",((a.get("tx-bits-per-second")/1024)))
+					t=round((float(a.get("tx-bits-per-second")/1024)/1024),3)
+					r=round((float(a.get("rx-bits-per-second")/1024)/1024),3)
+					config.srvg002tx.set(t)
+					config.srvg002rx.set(r)
+			except(librouteros.exceptions.TrapError):
+				t=0
+				r=0
+				print ("pptp-srvg002: RX:0 Kbps Tunnel Down!")
+				print ("pptp-srvg002: TX:0 Kbps Tunnel down!")
 				config.srvg002tx.set(t)
 				config.srvg002rx.set(r)
+
 
 
 			params = {'cpu-load'}
@@ -215,3 +224,4 @@ def main():
 if __name__=="__main__":
 	start_http_server(8000)
 	main()
+
